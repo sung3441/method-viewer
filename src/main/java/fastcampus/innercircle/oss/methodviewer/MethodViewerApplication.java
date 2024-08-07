@@ -1,13 +1,15 @@
 package fastcampus.innercircle.oss.methodviewer;
 
+import fastcampus.innercircle.oss.methodviewer.annotations.EnableGlobalMethodViewer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MethodviewerApplication {
+@EnableGlobalMethodViewer
+public class MethodViewerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MethodviewerApplication.class, args);
+		SpringApplication.run(MethodViewerApplication.class, args);
 	}
 
 }
