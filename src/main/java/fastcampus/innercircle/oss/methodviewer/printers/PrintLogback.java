@@ -21,15 +21,15 @@ public class PrintLogback implements Print {
             case WARN:
                 logger.warn(message);
                 break;
-            case DEBUG:
-                logger.debug(message);
-                break;
             case TRACE:
                 logger.trace(message);
                 break;
             case INFO:
-            default:
                 logger.info(message);
+                break;
+            case DEBUG:
+            default:
+                logger.debug(message);
                 break;
         }
     }

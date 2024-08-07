@@ -2,10 +2,6 @@ package fastcampus.innercircle.oss.methodviewer.config;
 
 import fastcampus.innercircle.oss.methodviewer.aspects.MethodViewerAspect;
 import fastcampus.innercircle.oss.methodviewer.printers.Print;
-import fastcampus.innercircle.oss.methodviewer.printers.PrintLog4j;
-import fastcampus.innercircle.oss.methodviewer.printers.PrintLogback;
-import fastcampus.innercircle.oss.methodviewer.printers.PrintSystemOut;
-import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,19 +24,6 @@ public class MethodViewerConfig {
     public MethodViewerAspect methodViewerAspect(Print print) {
         String basePackage = StringUtils.hasText(baseDir) ? baseDir : getDefaultBaseDir();
         return new MethodViewerAspect(basePackage, print);
-    }
-
-    @Bean
-    public Print print() {
-        switch (printerType.toLowerCase()) {
-            case "log4j":
-                return new PrintLog4j(Level.toLevel(logLevel));
-            case "logback":
-                return new PrintLogback(org.slf4j.event.Level.valueOf(logLevel));
-            case "sysout":
-            default:
-                return new PrintSystemOut();
-        }
     }
 
     private String getDefaultBaseDir() {
