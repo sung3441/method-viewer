@@ -3,11 +3,9 @@
 ## 개요
 메소드의 다양한 정보를 출력할 수 있는 어노테이션 모음
 
-## 작업 목록
-- [ ] 메소드 속도 출력
-- [ ] 메소드 정보 출력 (파라미터, 반환 값)
-- [ ] 메소드 호출부 출력
-- [ ] 설정 기능
-  - [ ] 로그 레벨 설정
-  - [ ] 대상 경로 설정
-  - [ ] 로그 구현체 설정 (Log4j, Logback 등)
+## 사용 방법
+```application.properties
+methodviewer.basedir=fastcampus.innercircle.oss.methodviewer // 글로벌 설정 시 영향 받을 패키지 입력
+methodviewer.printer.type=logback // sysout, logback, log4j
+methodviewer.printer.loglevel=INFO // TRACE, DEBUG, INFO, WARN, ERROR
+```
