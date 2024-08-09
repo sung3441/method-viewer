@@ -8,7 +8,7 @@ public class PrintLogback implements Print {
     private static final Logger logger = LoggerFactory.getLogger(PrintLogback.class);
     private final Level logLevel;
 
-    public PrintLogback(Level logLevel) {
+    PrintLogback(Level logLevel) {
         this.logLevel = logLevel;
     }
 

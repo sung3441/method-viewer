@@ -4,16 +4,14 @@ import fastcampus.innercircle.oss.methodviewer.printers.Print;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.stereotype.Component;
 
 @Aspect
-@Component
 public class MethodViewerAspect {
 
     private final String baseDir;
     private final Print print;
 
-    public MethodViewerAspect(String baseDir, Print print) {
+    MethodViewerAspect(String baseDir, Print print) {
         this.baseDir = baseDir;
         this.print = print;
     }
@@ -23,45 +21,70 @@ public class MethodViewerAspect {
         long startTime = System.currentTimeMillis();
         Object result = joinPoint.proceed();
         long endTime = System.currentTimeMillis();
-        print.print("Method " + joinPoint.getSignature().getName() + " executed in " + (endTime - startTime) + " ms");
+        print("메소드명[" + joinPoint.getSignature().getName() + "], 실행시간[" + ((endTime - startTime)/ (double) 1_000) + "]초");
         return result;
     }
 
     @Around("@annotation(fastcampus.innercircle.oss.methodviewer.annotations.ParameterViewer)")
     public Object handleParameterViewer(ProceedingJoinPoint joinPoint) throws Throwable {
+        StringBuilder sb = new StringBuilder();
         Object[] args = joinPoint.getArgs();
-        print.print("Method " + joinPoint.getSignature().getName() + " called with parameters: ");
+        sb.append("메소드명[").append(joinPoint.getSignature().getName()).append("], 파라미터: [");
         for (Object arg : args) {
-            print.print(" - " + arg);
+            sb.append(" - ").append(arg);
         }
+        sb.append("]");
+        print(sb.toString());
         return joinPoint.proceed();
     }
 
     @Around("@annotation(fastcampus.innercircle.oss.methodviewer.annotations.ReturnValueViewer)")
     public Object handleReturnValueViewer(ProceedingJoinPoint joinPoint) throws Throwable {
         Object result = joinPoint.proceed();
-        print.print("Method " + joinPoint.getSignature().getName() + " returned: " + result);
+        print("메소드명[" + joinPoint.getSignature().getName() + "], 반환 값[" + result + "]");
         return result;
+    }
+
+    @Around("@annotation(fastcampus.innercircle.oss.methodviewer.annotations.StackTraceViewer)")
+    public Object handleStackTraceViewer(ProceedingJoinPoint joinPoint) throws Throwable {
+        StringBuilder sb = new StringBuilder();
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        sb.append("메소드명[").append(joinPoint.getSignature().getName()).append("], 스택목록[\n");
+        for (StackTraceElement element : stackTrace) {
+            sb.append(" - ").append(element.toString()).append("\n");
+        }
+        sb.append("]");
+        print(sb.toString());
+        return joinPoint.proceed();
     }
 
     @Around("@annotation(fastcampus.innercircle.oss.methodviewer.annotations.MethodViewer)")
     public Object handleMethodViewer(ProceedingJoinPoint joinPoint) throws Throwable {
-        // ParameterViewer 기능 처리
+        StringBuilder sb = new StringBuilder();
         Object[] args = joinPoint.getArgs();
-        print.print("Method " + joinPoint.getSignature().getName() + " called with parameters: ");
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        sb.append("메소드명[").append(joinPoint.getSignature().getName()).append("]\n파라미터: [\n");
         for (Object arg : args) {
-            print.print(" - " + arg);
+            sb.append(" - ").append(arg).append("\n");
         }
-
-        // SpeedViewer 기능 처리
+        sb.append("]\n");
+        sb.append("스택목록[\n");
+        for (StackTraceElement element : stackTrace) {
+            sb.append(" - ").append(element.toString()).append("\n");
+        }
+        sb.append("]");
+        print(sb.toString());
+        sb.setLength(0);
         long startTime = System.currentTimeMillis();
         Object result = joinPoint.proceed();
         long endTime = System.currentTimeMillis();
-        print.print("Method " + joinPoint.getSignature().getName() + " executed in " + (endTime - startTime) + " ms");
-
-        // ReturnValueViewer 기능 처리
-        print.print("Method " + joinPoint.getSignature().getName() + " returned: " + result);
-
+        sb.append("실행시간[").append((endTime - startTime) / (double) 1_000).append("]초\n");
+        sb.append("반환 값[").append(result).append("]\n");
+        print(sb.toString());
         return result;
+    }
+
+    public void print(String message) {
+        print.print("\n" + message);
     }
 }
