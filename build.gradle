@@ -4,6 +4,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.2' apply false
 	id 'io.spring.dependency-management' version '1.1.6'
+	id 'maven-publish'
 }
 
 group = 'fastcampus.innercircle.oss'
@@ -26,10 +27,22 @@ dependencyManagement {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation 'org.springframework.boot:spring-boot-starter-security:3.3.2'
+	implementation 'org.springframework.boot:spring-boot-starter-aop:3.3.2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId = 'fastcampus.innercircle.oss'
+			artifactId = 'methodviewer'
+			version = '0.2.4'
+
+			from components.java
+		}
+	}
 }
 
 tasks.named('test') {
